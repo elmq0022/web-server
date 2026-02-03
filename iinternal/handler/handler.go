@@ -25,7 +25,11 @@ func ParseRequest(req []byte) (HTTPRequest, error) {
 		parts := bytes.Split(header, []byte(":"))
 		k := strings.Trim(string(parts[0]), " ")
 		v := strings.Trim(string(parts[1]), " ")
-		h[k] = []string{v}
+
+		if _, ok := h[k]; !ok {
+			h[k] = []string{}
+		}
+		h[k] = append(h[k], v)
 	}
 
 	return HTTPRequest{
@@ -37,6 +41,6 @@ func ParseRequest(req []byte) (HTTPRequest, error) {
 	}, nil
 }
 
-func CreateResponse() {
-
+func CreateResponse(method, url string) ([]byte, error) {
+	return []byte{}, nil
 }
