@@ -2,6 +2,8 @@ package handler
 
 import (
 	"bytes"
+	"maps"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -68,7 +70,9 @@ func (r *HTTPResponse) CreateResponse() []byte {
 
 	// add headers
 	// consider sorting the keys for consistent returns
-	for key, vals := range r.Headers {
+	sortedKeys := slices.Sorted(maps.Keys(r.Headers))
+	for _, key := range sortedKeys {
+		vals, _ := r.Headers[key]
 		for _, val := range vals {
 			resp = append(resp, []byte(key)...)
 			resp = append(resp, []byte(": ")...)
