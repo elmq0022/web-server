@@ -72,10 +72,7 @@ func TestParseHTTPRequest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := handler.ParseRequest(tt.req)
-			if err != nil {
-				t.Fatal(err)
-			}
+			got := handler.ParseRequest(tt.req)
 			assert.Equal(t, tt.want, got)
 		})
 	}

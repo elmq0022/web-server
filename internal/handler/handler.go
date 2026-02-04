@@ -16,7 +16,7 @@ type HTTPRequest struct {
 	Body    []byte
 }
 
-func ParseRequest(req []byte) (HTTPRequest, error) {
+func ParseRequest(req []byte) HTTPRequest {
 
 	lines := bytes.SplitN(req, []byte("\r\n\r\n"), 2)
 	headers := bytes.Split(lines[0], []byte("\r\n"))
@@ -41,7 +41,7 @@ func ParseRequest(req []byte) (HTTPRequest, error) {
 		Version: string(l[2]),
 		Headers: h,
 		Body:    body,
-	}, nil
+	}
 }
 
 type HTTPResponse struct {
