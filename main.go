@@ -10,7 +10,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/elmq0022/web-server/internal/handler"
+	"github.com/elmq0022/web-server/internal/requests"
+	"github.com/elmq0022/web-server/internal/responses"
 )
 
 func main() {
@@ -50,7 +51,7 @@ func handle(conn net.Conn) {
 		}
 	}
 
-	parsedRequest := handler.ParseRequest(req)
+	parsedRequest := requests.ParseRequest(req)
 	log.Printf("%s %s from %s", parsedRequest.Method, parsedRequest.URL, clientAddr)
 
 	var statusCode int
@@ -91,7 +92,7 @@ func handle(conn net.Conn) {
 	headers := make(map[string][]string)
 	headers["Content-Length"] = []string{strconv.Itoa(len(body))}
 
-	resp := &handler.HTTPResponse{
+	resp := &responses.HTTPResponse{
 		Version:    "HTTP/1.1",
 		StatusCode: statusCode,
 		Status:     status,
