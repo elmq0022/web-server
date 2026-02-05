@@ -2,8 +2,12 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/elmq0022/web-server/internal/handler"
@@ -46,20 +50,56 @@ func handle(conn net.Conn) {
 		}
 	}
 
-	pr := handler.ParseRequest(req)
-	log.Printf("%s %s from %s", pr.Method, pr.URL, clientAddr)
+	parsedRequest := handler.ParseRequest(req)
+	log.Printf("%s %s from %s", parsedRequest.Method, parsedRequest.URL, clientAddr)
 
-	body := []byte(pr.URL)
+	var statusCode int
+	var status string
+	var body []byte
+
+	// read the page from disk
+	prefix := "/var/www/"
+	home, _ := os.UserHomeDir()
+	page := filepath.Join(home, prefix, parsedRequest.URL)
+
+	info, err := os.Stat(page)
+	if os.IsNotExist(err) {
+		log.Printf("Could not read page %s: %v", page, err)
+		statusCode = http.StatusNotFound
+		status = fmt.Sprintf("Page %s Not Found", parsedRequest.URL)
+	} else if err != nil {
+		return
+	} else if info.IsDir() {
+		page = filepath.Join(page, "index.html")
+	} else {
+		// noop
+	}
+
+	data, err := os.ReadFile(page)
+	if err != nil {
+		log.Printf("Could not read page %s: %v", page, err)
+		statusCode = http.StatusNotFound
+		status = fmt.Sprintf("Page %s Not Found", parsedRequest.URL)
+	} else {
+		log.Printf("Returning requested page %s", parsedRequest.URL)
+		statusCode = http.StatusOK
+		status = "Status OK"
+		body = data
+	}
+
+	// build response
 	headers := make(map[string][]string)
 	headers["Content-Length"] = []string{strconv.Itoa(len(body))}
+
 	resp := &handler.HTTPResponse{
 		Version:    "HTTP/1.1",
-		StatusCode: 200,
-		Status:     "OK",
+		StatusCode: statusCode,
+		Status:     status,
 		Headers:    headers,
 		Body:       body,
 	}
 
+	// write the response
 	if _, err := conn.Write(resp.CreateResponse()); err != nil {
 		log.Printf("error writing response to %s: %v", clientAddr, err)
 		return
