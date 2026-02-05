@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"net/http"
 	"strconv"
 
 	"github.com/elmq0022/web-server/internal/requests"
@@ -40,15 +41,29 @@ func handle(conn net.Conn) {
 	parsedRequest := requests.ParseRequest(req)
 	log.Printf("%s %s from %s", parsedRequest.Method, parsedRequest.URL, clientAddr)
 
-	statusCode, status, body := responses.LoadFileFromURL(parsedRequest.URL)
+	var resp *responses.HTTPResponse
 	headers := make(map[string][]string)
-	headers["Content-Length"] = []string{strconv.Itoa(len(body))}
-	resp := &responses.HTTPResponse{
-		Version:    "HTTP/1.1",
-		StatusCode: statusCode,
-		Status:     status,
-		Headers:    headers,
-		Body:       body,
+	headers["Connection"] = []string{"close"}
+
+	if parsedRequest.Method != "GET" {
+		headers["Content-Length"] = []string{"0"}
+		resp = &responses.HTTPResponse{
+			Version:    "HTTP/1.1",
+			StatusCode: http.StatusMethodNotAllowed,
+			Status:     "Method Not Allowed",
+			Headers:    headers,
+			Body:       nil,
+		}
+	} else {
+		statusCode, status, body := responses.LoadFileFromURL(parsedRequest.URL, headers)
+		headers["Content-Length"] = []string{strconv.Itoa(len(body))}
+		resp = &responses.HTTPResponse{
+			Version:    "HTTP/1.1",
+			StatusCode: statusCode,
+			Status:     status,
+			Headers:    headers,
+			Body:       body,
+		}
 	}
 
 	if _, err := conn.Write(resp.CreateResponse()); err != nil {
