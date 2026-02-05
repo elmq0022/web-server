@@ -40,7 +40,6 @@ func handle(conn net.Conn) {
 	parsedRequest := requests.ParseRequest(req)
 	log.Printf("%s %s from %s", parsedRequest.Method, parsedRequest.URL, clientAddr)
 
-	// build response
 	statusCode, status, body := responses.LoadFileFromURL(parsedRequest.URL)
 	headers := make(map[string][]string)
 	headers["Content-Length"] = []string{strconv.Itoa(len(body))}
