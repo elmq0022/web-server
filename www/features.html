@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - Go Web Server</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/features.html">Features</a>
+    </nav>
+    <main>
+        <h1>Features</h1>
+        <ul>
+            <li><strong>Raw TCP handling</strong> &mdash; Connections managed directly with <code>net.Listener</code> and <code>net.Conn</code></li>
+            <li><strong>HTTP/1.1 request parsing</strong> &mdash; Method, URL, headers, and body extracted from raw bytes</li>
+            <li><strong>Static file serving</strong> &mdash; Files served from the filesystem with automatic directory index resolution</li>
+            <li><strong>Content-type detection</strong> &mdash; Responses set the correct type for .html, .css, .js, .json, and .txt files</li>
+            <li><strong>Concurrent connections</strong> &mdash; Each client is handled in its own goroutine</li>
+            <li><strong>Zero dependencies</strong> &mdash; Only the Go standard library is used in production</li>
+        </ul>
+    </main>
+</body>
+</html>

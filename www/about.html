@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Go Web Server</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/features.html">Features</a>
+    </nav>
+    <main>
+        <h1>About</h1>
+        <p>This server is built entirely on Go's <code>net</code> package. It opens a raw TCP listener, accepts connections, and handles each one in its own goroutine.</p>
+        <h2>How It Works</h2>
+        <ol>
+            <li>A TCP listener binds to port 8080</li>
+            <li>Incoming connections are accepted in a loop</li>
+            <li>Each connection is handled concurrently in a goroutine</li>
+            <li>Raw bytes are read until the end-of-headers marker (<code>\r\n\r\n</code>)</li>
+            <li>The request line and headers are parsed manually</li>
+            <li>The requested file is loaded from disk and served with the correct content type</li>
+        </ol>
+        <h2>Why?</h2>
+        <p>This project demonstrates how HTTP works under the hood. By skipping Go's built-in <code>net/http</code> server, every part of the protocol is handled explicitly &mdash; from parsing request lines to formatting response headers.</p>
+    </main>
+</body>
+</html>
